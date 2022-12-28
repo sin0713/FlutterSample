@@ -13,6 +13,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
+      theme: ThemeData(
+        primarySwatch: Colors.pink,
+        primaryColor: const Color(0xffe91e63),
+        canvasColor: const Color(0xfffafafa),
+      ),
       home: MyHomePage(
         title: this.title
       ),
@@ -61,14 +66,16 @@ class _MyHomePageState extends State<MyHomePage> {
         appBar: AppBar(
           title: Text(widget.title),
         ),
-        body: Text(
-        _item.toString(),
-        style: const TextStyle(fontSize: 32.0)
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: _setData,
-          tooltip: 'set message.',
-          child: const Icon(Icons.star),
+        body:
+        Center(
+          child:
+          Text(
+            _item.toString(),
+            style: const TextStyle(fontSize: 32.0,
+                color: Color(0xff000000),
+                fontWeight: FontWeight.w700,
+                fontFamily: "Roboto"),
+          ),
         ),
       );
   }
