@@ -47,12 +47,16 @@ class Data {
 class _MyHomePageState extends State<MyHomePage> {
 
   static var _message = 'ok.';
-  static var _checked = false;
+  static var _groupValue = RadioType.A;
 
-  void checkChanged(bool? val) {
+  void checkChanged(RadioType? val) {
     setState(() {
-      _checked = val ?? false;
-      _message = _checked ? "checked!" : "not checked ..";
+      _groupValue = val ?? RadioType.A;
+      if (val == RadioType.A) {
+         _message = "A";
+      } else {
+        _message = "B";
+      }
     });
   }
 
@@ -78,31 +82,55 @@ class _MyHomePageState extends State<MyHomePage> {
                       fontFamily: "Roboto"),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Row(
+
+                Padding(padding: EdgeInsets.all(10.0)),
+
+                Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     mainAxisSize: MainAxisSize.max,
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Checkbox(
-                        value: _checked,
+                      Radio<RadioType>(
+                        value: RadioType.A,
+                        groupValue: _groupValue,
                         onChanged: checkChanged,
                       ),
                       Text(
-                        "Checkbox",
+                        "Radio A",
+                        style: TextStyle(fontSize: 28.0,
+                          fontWeight: FontWeight.w400,
+                          fontFamily: "Roboto"),
+                      )
+                    ],
+                  ),
+
+               Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.max,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Radio<RadioType>(
+                        value: RadioType.B,
+                        groupValue: _groupValue,
+                        onChanged: checkChanged,
+                      ),
+                      Text(
+                        "Radio B",
                         style: TextStyle(fontSize: 28.0,
                           fontWeight: FontWeight.w400,
                           fontFamily: "Roboto"),
                       )
                     ],
                   )
-                ),
               ],
             ),
         )
       );
   }
+}
+
+enum RadioType {
+  A, B
 }
 
 
