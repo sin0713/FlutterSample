@@ -47,11 +47,12 @@ class Data {
 class _MyHomePageState extends State<MyHomePage> {
 
   static var _message = 'ok.';
-  static final _controller = TextEditingController();
+  static var _checked = false;
 
-  void buttonPressed(String val) {
+  void checkChanged(bool? val) {
     setState(() {
-      _message = val;
+      _checked = val ?? false;
+      _message = _checked ? "checked!" : "not checked ..";
     });
   }
 
@@ -79,16 +80,23 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 Padding(
                   padding: const EdgeInsets.all(10.0),
-                  child: TextField(
-                    onChanged: buttonPressed,
-                    controller: _controller,
-                    style: const TextStyle(
-                      fontSize: 28.0,
-                      color: Color(0xffFF0000),
-                      fontWeight: FontWeight.w400,
-                      fontFamily: "Roboto"
-                    ),
-                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.max,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Checkbox(
+                        value: _checked,
+                        onChanged: checkChanged,
+                      ),
+                      Text(
+                        "Checkbox",
+                        style: TextStyle(fontSize: 28.0,
+                          fontWeight: FontWeight.w400,
+                          fontFamily: "Roboto"),
+                      )
+                    ],
+                  )
                 ),
               ],
             ),
