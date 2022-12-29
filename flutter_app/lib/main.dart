@@ -47,92 +47,13 @@ class Data {
 class _MyHomePageState extends State<MyHomePage> {
 
   static var _message = 'ok';
-  static var _stars = '☆☆☆☆☆';
-  static var _star = 0;
-  static var _groupValue = RadioType.A;
-
-  void checkChanged(RadioType? val) {
-    setState(() {
-      _groupValue = val ?? RadioType.A;
-      if (val == RadioType.A) {
-         _message = "A";
-      } else {
-        _message = "B";
-      }
-    });
-  }
-
-  void resultAlert(String value) {
-    setState(() {
-      _message = 'selected: $value';
-    });
-  }
-
-  void buttonPressed() {
-    showDialog(context: context,
-        builder: (BuildContext context) => AlertDialog(
-          title: const Text("Hello !"),
-          content: const Text("This is sample."),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Cancel'),
-              onPressed: () => Navigator.pop<String>(context, 'Cancel')
-            ),
-            TextButton(
-              child: const Text('OK'),
-              onPressed: () => Navigator.pop(context, 'OK')
-            )
-          ]
-        )
-    ).then((value) => resultAlert(value));
-  }
-
-  void buttonPressedA() {
-    _message = 'tap "android".';
-    _star++;
-    update();
-  }
-  void buttonPressedB() {
-    _message =  'tap "favorite".';
-    _star--;
-    update();
-  }
-  void update() {
-    _star = _star < 0 ? 0 : _star > 5 ? 5 : _star;
-    setState(() {
-      _stars = '★★★★★☆☆☆☆☆'.substring(5 - _star, 5 - _star + 5);
-      _message = _message + '[$_star]';
-    });
-  }
+  static var _index = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
           title: Text(widget.title),
-          leading: BackButton(color: Colors.white),
-          actions: <Widget>[
-            IconButton(
-                onPressed: buttonPressedA,
-                tooltip: 'add star....',
-                icon: Icon(Icons.android)
-            ),
-            IconButton(
-                onPressed: buttonPressedB,
-                tooltip: 'subtract star....',
-                icon: Icon(Icons.favorite)
-            ),
-          ],
-          bottom: PreferredSize(
-            preferredSize: const Size.fromHeight(50.0),
-            child: Center(
-              child: Text(_stars,
-              style: const TextStyle(
-                fontSize: 22.0,
-                color: Colors.white),
-              )
-            )
-          )
         ),
         body: Center(
           child: Column(
@@ -149,11 +70,56 @@ class _MyHomePageState extends State<MyHomePage> {
                       fontWeight: FontWeight.w400,
                       fontFamily: "Roboto"),
                   ),
+                ),
+
+                ListView(
+                  shrinkWrap: true,
+                  padding: const EdgeInsets.all(20.0),
+                  children:  <Widget>[
+                    ListTile(
+                      leading: const Icon(Icons.android, size: 32),
+                      title: const Text(
+                          'first item',
+                          style: TextStyle(fontSize: 28)),
+                      selected: _index == 1,
+                      onTap: () {
+                        _index = 1;
+                        tapTile();
+                      }
+                    ),
+                    ListTile(
+                      leading: const Icon(Icons.favorite, size: 32),
+                      title: const Text(
+                          'second item',
+                          style: TextStyle(fontSize: 28)),
+                      selected: _index == 2,
+                      onTap: () {
+                        _index = 2;
+                        tapTile();
+                      }
+                    ),
+                   ListTile(
+                      leading: const Icon(Icons.home, size: 32),
+                      title: const Text(
+                          'third item',
+                          style: TextStyle(fontSize: 28)),
+                      selected: _index == 3,
+                      onTap: () {
+                        _index = 3;
+                        tapTile();
+                      }
+                    )
+                  ],
                 )
               ],
             ),
         )
       );
+  }
+  void tapTile() {
+    setState(() {
+      _message = 'you tapped: No, $_index';
+    });
   }
 }
 
