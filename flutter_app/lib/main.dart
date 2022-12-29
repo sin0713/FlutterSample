@@ -46,28 +46,12 @@ class Data {
 
 class _MyHomePageState extends State<MyHomePage> {
 
-  //static final _data = [
-  //  Data('Apple', 200),
-  //  Data('Orange', 150),
-  //  Data('Peach', 300)
-  //];
-
-  //Data _item = _data[0];
-
-  //void _setData() {
-  //  setState(() {
-  //    _item = ((_data..shuffle())).first;
-  //  });
-  //}
-
-
   static var _message = 'ok.';
-  static var _janken = <String>['グー', 'チョキ', 'パー'];
+  static final _controller = TextEditingController();
 
-
-  void buttonPressed() {
+  void buttonPressed(String val) {
     setState(() {
-      _message = (_janken..shuffle()).first;
+      _message = val;
     });
   }
 
@@ -93,18 +77,19 @@ class _MyHomePageState extends State<MyHomePage> {
                       fontFamily: "Roboto"),
                   ),
                 ),
-                TextButton(
-                  onPressed: buttonPressed,
-                  child: const Text(
-                    "Push me",
-                    style: TextStyle(
-                      fontSize: 32.0,
-                      color: Color(0xff000000),
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: TextField(
+                    onChanged: buttonPressed,
+                    controller: _controller,
+                    style: const TextStyle(
+                      fontSize: 28.0,
+                      color: Color(0xffFF0000),
                       fontWeight: FontWeight.w400,
                       fontFamily: "Roboto"
                     ),
                   ),
-                )
+                ),
               ],
             ),
         )
