@@ -46,17 +46,28 @@ class Data {
 
 class _MyHomePageState extends State<MyHomePage> {
 
-  static final _data = [
-    Data('Apple', 200),
-    Data('Orange', 150),
-    Data('Peach', 300)
-  ];
+  //static final _data = [
+  //  Data('Apple', 200),
+  //  Data('Orange', 150),
+  //  Data('Peach', 300)
+  //];
 
-  Data _item = _data[0];
+  //Data _item = _data[0];
 
-  void _setData() {
+  //void _setData() {
+  //  setState(() {
+  //    _item = ((_data..shuffle())).first;
+  //  });
+  //}
+
+
+  static var _message = 'ok.';
+  static var _janken = <String>['グー', 'チョキ', 'パー'];
+
+
+  void buttonPressed() {
     setState(() {
-      _item = ((_data..shuffle())).first;
+      _message = (_janken..shuffle()).first;
     });
   }
 
@@ -66,17 +77,37 @@ class _MyHomePageState extends State<MyHomePage> {
         appBar: AppBar(
           title: Text(widget.title),
         ),
-        body:
-        Center(
-          child:
-          Text(
-            _item.toString(),
-            style: const TextStyle(fontSize: 32.0,
-                color: Color(0xff000000),
-                fontWeight: FontWeight.w700,
-                fontFamily: "Roboto"),
-          ),
-        ),
+        body: Center(
+          child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.max,
+              children: <Widget>[
+                Padding(padding: EdgeInsets.all(20.0),
+                  child: Text(
+                    _message,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 32.0,
+                      fontWeight: FontWeight.w400,
+                      fontFamily: "Roboto"),
+                  ),
+                ),
+                TextButton(
+                  onPressed: buttonPressed,
+                  child: const Text(
+                    "Push me",
+                    style: TextStyle(
+                      fontSize: 32.0,
+                      color: Color(0xff000000),
+                      fontWeight: FontWeight.w400,
+                      fontFamily: "Roboto"
+                    ),
+                  ),
+                )
+              ],
+            ),
+        )
       );
   }
 }
