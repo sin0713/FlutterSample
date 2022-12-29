@@ -46,7 +46,7 @@ class Data {
 
 class _MyHomePageState extends State<MyHomePage> {
 
-  static var _message = 'ok.';
+  static var _message = '';
   static var _groupValue = RadioType.A;
 
   void checkChanged(RadioType? val) {
@@ -58,6 +58,31 @@ class _MyHomePageState extends State<MyHomePage> {
         _message = "B";
       }
     });
+  }
+
+  void resultAlert(String value) {
+    setState(() {
+      _message = 'selected: $value';
+    });
+  }
+
+  void buttonPressed() {
+    showDialog(context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text("Hello !"),
+          content: const Text("This is sample."),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () => Navigator.pop<String>(context, 'Cancel')
+            ),
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () => Navigator.pop(context, 'OK')
+            )
+          ]
+        )
+    ).then((value) => resultAlert(value));
   }
 
   @override
@@ -83,45 +108,21 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
 
-                Padding(padding: EdgeInsets.all(10.0)),
+                const Padding(padding: EdgeInsets.all(10.0)),
 
-                Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.max,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Radio<RadioType>(
-                        value: RadioType.A,
-                        groupValue: _groupValue,
-                        onChanged: checkChanged,
-                      ),
-                      Text(
-                        "Radio A",
-                        style: TextStyle(fontSize: 28.0,
-                          fontWeight: FontWeight.w400,
-                          fontFamily: "Roboto"),
-                      )
-                    ],
+                Padding(padding: EdgeInsets.all(20.0),
+                child: ElevatedButton(
+                  onPressed: buttonPressed,
+                  child: const Text(
+                    "tap me!",
+                    style: TextStyle(
+                      fontSize: 32.0,
+                      color: Color(0xff000000),
+                      fontWeight: FontWeight.w400,
+                      fontFamily: "Roboto"
+                    ),
                   ),
-
-               Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.max,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Radio<RadioType>(
-                        value: RadioType.B,
-                        groupValue: _groupValue,
-                        onChanged: checkChanged,
-                      ),
-                      Text(
-                        "Radio B",
-                        style: TextStyle(fontSize: 28.0,
-                          fontWeight: FontWeight.w400,
-                          fontFamily: "Roboto"),
-                      )
-                    ],
-                  )
+                ),)
               ],
             ),
         )
