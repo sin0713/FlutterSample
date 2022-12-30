@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:ui' as ui;
 
 void main() {
   runApp(const MyApp());
@@ -32,59 +33,49 @@ class FirstScreen extends StatefulWidget {
 
 
 class _FirstScreenState extends State<FirstScreen> {
-
-  static var _items = <Widget>[];
-  static var _message = 'ok';
-  static var _tapped = 0;
-  static const int max = 5;
-
-  @override
-  void initState() {
-    super.initState();
-    for (var i = 0; i < max; i++) {
-      var item = ListTile(
-        leading: const Icon(Icons.android),
-        title: Text('No, $i'),
-        onTap: () {
-          _tapped = i;
-          tapItem();
-        }
-      );
-      _items.add(item);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Next'),
       ),
-      body: Center(
-        child: Text(
-          _message,
-          style: const TextStyle(
-            fontSize: 32.0
-          ),
-        ),
-      ),
-      drawer: Drawer(
-        child: ListView(
-          shrinkWrap: true,
-          padding: const EdgeInsets.all(20.0),
-          children: _items,
-        ),
-      ),
+      body: CustomPaint(
+        painter: MyPaint(),
+      )
     );
   }
 
-  void tapItem() {
-      setState(() {
-        _message = 'you tapped No, $_tapped';
-      });
-    }
+
 }
 
+class MyPaint extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    Paint p = Paint();
+
+    ui.ParagraphBuilder builder = ui.ParagraphBuilder(
+      ui.ParagraphStyle(textDirection: TextDirection.ltr)
+    )
+      ..pushStyle(ui.TextStyle(color: Colors.red, fontSize: 58.0))
+      ..addText('Hello!, ')
+      ..pushStyle(ui.TextStyle(color: Colors.blue[700], fontSize: 30.0))
+      ..addText('This is a sample of paragraph text. ')
+      ..pushStyle(ui.TextStyle(color: Colors.blue[200], fontSize: 30.0))
+      ..addText('You can draw MULTI-FONT text!');
+
+    ui.Paragraph paragraph = builder.build()
+    ..layout(const ui.ParagraphConstraints(width: 300.0));
+
+    Offset off = Offset(50.0, 50.0);
+    canvas.drawParagraph(paragraph, off);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return true;
+  }
+
+}
 
 
 
