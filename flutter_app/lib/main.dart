@@ -31,21 +31,27 @@ class FirstScreen extends StatefulWidget {
 }
 
 
-class _FirstScreenState extends State<FirstScreen>
-    with SingleTickerProviderStateMixin {
+class _FirstScreenState extends State<FirstScreen> {
 
-  static const List<Tab> tabs = <Tab>[
-    Tab(text: 'One'),
-    Tab(text: 'Two'),
-    Tab(text: 'Three'),
-  ];
-
-  late TabController _tabController;
+  static var _items = <Widget>[];
+  static var _message = 'ok';
+  static var _tapped = 0;
+  static const int max = 5;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: tabs.length, vsync: this);
+    for (var i = 0; i < max; i++) {
+      var item = ListTile(
+        leading: const Icon(Icons.android),
+        title: Text('No, $i'),
+        onTap: () {
+          _tapped = i;
+          tapItem();
+        }
+      );
+      _items.add(item);
+    }
   }
 
   @override
@@ -53,30 +59,30 @@ class _FirstScreenState extends State<FirstScreen>
     return Scaffold(
       appBar: AppBar(
         title: const Text('Next'),
-        bottom: TabBar(
-          controller: _tabController,
-          tabs: tabs,
+      ),
+      body: Center(
+        child: Text(
+          _message,
+          style: const TextStyle(
+            fontSize: 32.0
+          ),
         ),
       ),
-      body: TabBarView(
-        controller: _tabController,
-        children: tabs.map((Tab tab) {
-          return  createTab(tab);
-        }).toList(),
-      )
+      drawer: Drawer(
+        child: ListView(
+          shrinkWrap: true,
+          padding: const EdgeInsets.all(20.0),
+          children: _items,
+        ),
+      ),
     );
   }
 
-  Widget createTab(Tab tab) {
-    return Center(
-      child: Text(
-        'This is "${tab.text}" Tab.',
-        style: const TextStyle(
-        fontSize: 32.0,
-        color: Colors.blue)
-      ),
-    );
-  }
+  void tapItem() {
+      setState(() {
+        _message = 'you tapped No, $_tapped';
+      });
+    }
 }
 
 
