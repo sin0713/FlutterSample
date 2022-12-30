@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'dart:ui' as ui;
+import 'dart:typed_data';
 
 void main() {
   runApp(const MyApp());
@@ -33,14 +35,30 @@ class FirstScreen extends StatefulWidget {
 
 
 class _FirstScreenState extends State<FirstScreen> {
+  static ui.Image? _img = null;
+  static bool _flg = false;
+
+  Future<void> loadAssetImage(String fname) async {
+    final bd = await rootBundle.load("assets/images/$fname");
+    final Uint8List u8lst = await Uint8List.view(bd.buffer);
+    final codec = await ui.instantiateImageCodec(u8lst);
+    final frameInfo = await codec.getNextFrame();
+    _img = frameInfo.image;
+    setState(() {
+      _flg = true;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    loadAssetImage("android.png");
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Next'),
       ),
       body: CustomPaint(
-        painter: MyPaint(),
+        painter: MyPaint(_img),
       )
     );
   }
@@ -49,25 +67,19 @@ class _FirstScreenState extends State<FirstScreen> {
 }
 
 class MyPaint extends CustomPainter {
+  ui.Image? _img = null;
+
+  MyPaint(this._img);
+
   @override
   void paint(Canvas canvas, Size size) {
     Paint p = Paint();
 
-    ui.ParagraphBuilder builder = ui.ParagraphBuilder(
-      ui.ParagraphStyle(textDirection: TextDirection.ltr)
-    )
-      ..pushStyle(ui.TextStyle(color: Colors.red, fontSize: 58.0))
-      ..addText('Hello!, ')
-      ..pushStyle(ui.TextStyle(color: Colors.blue[700], fontSize: 30.0))
-      ..addText('This is a sample of paragraph text. ')
-      ..pushStyle(ui.TextStyle(color: Colors.blue[200], fontSize: 30.0))
-      ..addText('You can draw MULTI-FONT text!');
-
-    ui.Paragraph paragraph = builder.build()
-    ..layout(const ui.ParagraphConstraints(width: 300.0));
-
-    Offset off = Offset(50.0, 50.0);
-    canvas.drawParagraph(paragraph, off);
+    if (_img != null) {
+      Rect r0 = Rect.fromLTWH(0.0, 0.0, _img!.width.toDouble(), _img!.height.toDouble());
+      Rect r = const Rect.fromLTWH(50.0, 50.0, 100.0, 100.0);
+      canvas.drawImageRect(_img!, r0, r, p);
+    }
   }
 
   @override
