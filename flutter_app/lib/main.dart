@@ -36,12 +36,11 @@ class FirstScreen extends StatefulWidget {
 
 class _FirstScreenState extends State<FirstScreen> with SingleTickerProviderStateMixin{
   final _controller = TextEditingController();
-  final _fName = 'flutter_sampleData.txt';
+  final _fName = 'assets/documents/data.txt';
 
   @override
   void initState() {
     super.initState();
-
   }
 
   @override
@@ -54,14 +53,14 @@ class _FirstScreenState extends State<FirstScreen> with SingleTickerProviderStat
           padding: EdgeInsets.all(20.0),
           child: Column(
           children:  [
-            const Text('FILE ACCESS.',
+            const Text('RESOURCE ACCESS.',
               style: TextStyle(
                 fontSize: 32,
                 fontWeight: ui.FontWeight.w500),),
             const Padding(padding: EdgeInsets.all(10.0)),
             TextField(
               controller: _controller,
-              style: TextStyle(fontSize: 24),
+              style: const TextStyle(fontSize: 24),
               minLines: 1,
               maxLines: 5,
             )
@@ -80,28 +79,19 @@ class _FirstScreenState extends State<FirstScreen> with SingleTickerProviderStat
         onTap: (int value) async {
           switch(value) {
             case 0:
-              saveIt(_controller.text);
-              setState(() {
-                _controller.text = '';
-              });
-              showDialog(
-                  context: context,
-                  builder: (BuildContext context) => const AlertDialog(
-                    title: Text("Saved!"),
-                    content: Text("save message to file.")
-                  ));
-              break;
-            case 1:
-              String value = await loadIt();
+              final value = await loadIt();
               setState(() {
                 _controller.text = value;
               });
               showDialog(
                   context: context,
                   builder: (BuildContext context) => const AlertDialog(
-                    title: Text("Loaded!"),
-                    content: Text("load message from file."),
+                    title: Text('loaded!'),
+                    content: Text('load message from Asset.'),
                   ));
+              break;
+            case 1:
+
               break;
             default:
               print('no data');
@@ -111,34 +101,17 @@ class _FirstScreenState extends State<FirstScreen> with SingleTickerProviderStat
     );
   }
 
-  Future<File> getDataFile(String filename) async {
-    final directory = await getApplicationDocumentsDirectory();
-    return File(directory.path + '/' + filename);
-  }
 
-  void saveIt(String value) async {
-    final file = await getDataFile(_fName);
-    file.writeAsString(value);
+  Future<String> getDataAsset(String path) async {
+    return await rootBundle.loadString(path);
   }
 
   Future<String> loadIt() async {
     try {
-      final file = await getDataFile(_fName);
-      return file.readAsString();
-    } catch (e) {
+      final res = await getDataAsset(_fName);
+      return res;
+    } catch(e) {
       return '*** no data ***';
     }
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
