@@ -1,9 +1,8 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:ui' as ui;
-import 'dart:typed_data';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
 
 void main() {
   runApp(const MyApp());
@@ -36,7 +35,8 @@ class FirstScreen extends StatefulWidget {
 }
 
 class _FirstScreenState extends State<FirstScreen> with SingleTickerProviderStateMixin{
-  bool flg = false;
+  final _controller = TextEditingController();
+  final _fName = 'flutter_sampleData.txt';
 
   @override
   void initState() {
@@ -51,67 +51,86 @@ class _FirstScreenState extends State<FirstScreen> with SingleTickerProviderStat
          title: const Text('Next'),
        ),
        body: Padding(
-         padding: EdgeInsets.all(20),
-         child: Column(
-           children: [
-             AnimatedAlign(
-               alignment: flg ? Alignment.topLeft : Alignment.topRight,
-               duration: const Duration(seconds: 1),
-               curve: Curves.linear,
-               child: Container(
-                 color: Colors.red,
-                 width: 100,
-                 height: 100,
-               ),
-             )
-           ],
-         ),
-       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          setState(() {
-            flg = !flg;
-          });
-        }),
-     );
+          padding: EdgeInsets.all(20.0),
+          child: Column(
+          children:  [
+            const Text('FILE ACCESS.',
+              style: TextStyle(
+                fontSize: 32,
+                fontWeight: ui.FontWeight.w500),),
+            const Padding(padding: EdgeInsets.all(10.0)),
+            TextField(
+              controller: _controller,
+              style: TextStyle(fontSize: 24),
+              minLines: 1,
+              maxLines: 5,
+            )
+          ],
+        ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.blue,
+        selectedItemColor: Colors.white,
+        unselectedItemColor: Colors.white,
+        currentIndex: 0,
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem( label: 'Save', icon: Icon(Icons.save, color: Colors.white, size: 32, ) ),
+          BottomNavigationBarItem(label: 'Load', icon: Icon(Icons.open_in_new, color: Colors.white))
+        ],
+        onTap: (int value) async {
+          switch(value) {
+            case 0:
+              saveIt(_controller.text);
+              setState(() {
+                _controller.text = '';
+              });
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) => const AlertDialog(
+                    title: Text("Saved!"),
+                    content: Text("save message to file.")
+                  ));
+              break;
+            case 1:
+              String value = await loadIt();
+              setState(() {
+                _controller.text = value;
+              });
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) => const AlertDialog(
+                    title: Text("Loaded!"),
+                    content: Text("load message from file."),
+                  ));
+              break;
+            default:
+              print('no data');
+          }
+        },
+      ),
+    );
+  }
+
+  Future<File> getDataFile(String filename) async {
+    final directory = await getApplicationDocumentsDirectory();
+    return File(directory.path + '/' + filename);
+  }
+
+  void saveIt(String value) async {
+    final file = await getDataFile(_fName);
+    file.writeAsString(value);
+  }
+
+  Future<String> loadIt() async {
+    try {
+      final file = await getDataFile(_fName);
+      return file.readAsString();
+    } catch (e) {
+      return '*** no data ***';
+    }
   }
 }
 
-class MyPaint extends CustomPainter {
-  final double _value;
-
-  MyPaint(this._value);
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    Paint p = Paint();
-
-    canvas.save();
-
-    p.style = PaintingStyle.fill;
-    p.color = Color.fromARGB(100, 255, 0, 255);
-    Rect r = Rect.fromLTWH(0, 0, 250, 250);
-    canvas.translate(150, 250);
-    canvas.rotate(_value);
-    canvas.translate(-125, -125);
-    canvas.drawRect(r, p);
-
-    //canvas.restore();
-    //p.style = PaintingStyle.stroke;
-    //p.strokeWidth = 25;
-    //p.color = Color.fromARGB(100, 0, 255, 255);
-    //r = Rect.fromLTWH(0, 0, 250, 250);
-    //canvas.translate(150, 250);
-    //canvas.rotate(_value * -1);
-    //canvas.translate(-125, -125);
-    //canvas.drawRect(r, p);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return true;
-  }
-}
 
 
 
