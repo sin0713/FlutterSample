@@ -33,61 +33,75 @@ class FirstScreen extends StatefulWidget {
   _FirstScreenState createState() => _FirstScreenState();
 }
 
-
 class _FirstScreenState extends State<FirstScreen> {
-  static ui.Image? _img = null;
-  static bool _flg = false;
+  static ValueNotifier<int> _value = ValueNotifier<int>(0);
 
-  Future<void> loadAssetImage(String fname) async {
-    final bd = await rootBundle.load("assets/images/$fname");
-    final Uint8List u8lst = await Uint8List.view(bd.buffer);
-    final codec = await ui.instantiateImageCodec(u8lst);
-    final frameInfo = await codec.getNextFrame();
-    _img = frameInfo.image;
-    setState(() {
-      _flg = true;
-    });
+  @override
+  void initState() {
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    loadAssetImage("android.png");
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Next'),
       ),
-      body: CustomPaint(
-        painter: MyPaint(_img),
+      body: Center(
+        child: Column(
+          children: [
+            const Padding(padding: EdgeInsets.all(10)),
+            Container(
+              width: 300,
+              height: 300,
+              child: CustomPaint(
+                painter: MyPaint(_value),
+                child: const Center(),
+              ),
+            ),
+            const Padding(padding: EdgeInsets.all(5)),
+            ElevatedButton(
+              child: const Text("Click",
+              style: TextStyle(fontSize: 32),),
+              onPressed: () => _value.value++,
+            )
+          ],
+        ),
       )
     );
   }
-
-
 }
 
 class MyPaint extends CustomPainter {
-  ui.Image? _img = null;
+  final ValueNotifier<int> _value;
 
-  MyPaint(this._img);
+  MyPaint(this._value);
 
   @override
   void paint(Canvas canvas, Size size) {
     Paint p = Paint();
 
-    if (_img != null) {
-      Rect r0 = Rect.fromLTWH(0.0, 0.0, _img!.width.toDouble(), _img!.height.toDouble());
-      Rect r = const Rect.fromLTWH(50.0, 50.0, 100.0, 100.0);
-      canvas.drawImageRect(_img!, r0, r, p);
+    p.style = PaintingStyle.fill;
+    p.color = const Color.fromARGB(50, 0, 255, 255);
+    Rect r;
+    for (var i = 0; i < _value.value; i++) {
+      r = Rect.fromLTWH(10+i*20, 10+i*20, 100, 100);
+      canvas.drawRect(r, p);
     }
+
+    r = Rect.fromLTWH(0, 0, size.width, size.height);
+    p.style = PaintingStyle.stroke;
+    p.color = const Color.fromARGB(255, 100, 100, 100);
+    canvas.drawRect(r, p);
+    if (_value.value > 10) _value.value = 0;
   }
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
     return true;
   }
-
 }
+
 
 
 
