@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:ui' as ui;
@@ -33,47 +35,55 @@ class FirstScreen extends StatefulWidget {
   _FirstScreenState createState() => _FirstScreenState();
 }
 
-class _FirstScreenState extends State<FirstScreen> {
-  static ValueNotifier<int> _value = ValueNotifier<int>(0);
+class _FirstScreenState extends State<FirstScreen> with SingleTickerProviderStateMixin{
+  late Animation<double> animation;
+  late AnimationController controller;
 
   @override
   void initState() {
     super.initState();
+    controller = AnimationController(
+      duration: const Duration(seconds: 3),
+      vsync: this
+    );
+
+    animation = Tween<double>(begin: 0, end: pi*2)
+    .animate(controller)
+    ..addListener(() {
+      setState(() {
+        // do nothing...
+      });
+    });
+    controller.repeat(reverse: false);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Next'),
-      ),
-      body: Center(
-        child: Column(
-          children: [
-            const Padding(padding: EdgeInsets.all(10)),
-            Container(
-              width: 300,
-              height: 300,
-              child: CustomPaint(
-                painter: MyPaint(_value),
-                child: const Center(),
-              ),
-            ),
-            const Padding(padding: EdgeInsets.all(5)),
-            ElevatedButton(
-              child: const Text("Click",
-              style: TextStyle(fontSize: 32),),
-              onPressed: () => _value.value++,
-            )
-          ],
-        ),
-      )
-    );
+       appBar: AppBar(
+         title: const Text('Next'),
+       ),
+       body: Center(
+         child: Column(
+           children: [
+             const Padding(padding: EdgeInsets.all(10)),
+             Container(
+               width: 300,
+               height: 300,
+               child: CustomPaint(
+                 painter: MyPaint(animation.value),
+                 child: const Center(),
+               ),
+             ),
+           ],
+         ),
+       )
+     );
   }
 }
 
 class MyPaint extends CustomPainter {
-  final ValueNotifier<int> _value;
+  final double _value;
 
   MyPaint(this._value);
 
@@ -81,19 +91,25 @@ class MyPaint extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     Paint p = Paint();
 
-    p.style = PaintingStyle.fill;
-    p.color = const Color.fromARGB(50, 0, 255, 255);
-    Rect r;
-    for (var i = 0; i < _value.value; i++) {
-      r = Rect.fromLTWH(10+i*20, 10+i*20, 100, 100);
-      canvas.drawRect(r, p);
-    }
+    canvas.save();
 
-    r = Rect.fromLTWH(0, 0, size.width, size.height);
-    p.style = PaintingStyle.stroke;
-    p.color = const Color.fromARGB(255, 100, 100, 100);
+    p.style = PaintingStyle.fill;
+    p.color = Color.fromARGB(100, 255, 0, 255);
+    Rect r = Rect.fromLTWH(0, 0, 250, 250);
+    canvas.translate(150, 250);
+    canvas.rotate(_value);
+    canvas.translate(-125, -125);
     canvas.drawRect(r, p);
-    if (_value.value > 10) _value.value = 0;
+
+    //canvas.restore();
+    //p.style = PaintingStyle.stroke;
+    //p.strokeWidth = 25;
+    //p.color = Color.fromARGB(100, 0, 255, 255);
+    //r = Rect.fromLTWH(0, 0, 250, 250);
+    //canvas.translate(150, 250);
+    //canvas.rotate(_value * -1);
+    //canvas.translate(-125, -125);
+    //canvas.drawRect(r, p);
   }
 
   @override
