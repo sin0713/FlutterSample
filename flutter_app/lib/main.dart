@@ -36,25 +36,12 @@ class FirstScreen extends StatefulWidget {
 }
 
 class _FirstScreenState extends State<FirstScreen> with SingleTickerProviderStateMixin{
-  late Animation<double> animation;
-  late AnimationController controller;
+  bool flg = false;
 
   @override
   void initState() {
     super.initState();
-    controller = AnimationController(
-      duration: const Duration(seconds: 3),
-      vsync: this
-    );
 
-    animation = Tween<double>(begin: 0, end: pi*2)
-    .animate(controller)
-    ..addListener(() {
-      setState(() {
-        // do nothing...
-      });
-    });
-    controller.repeat(reverse: false);
   }
 
   @override
@@ -63,21 +50,29 @@ class _FirstScreenState extends State<FirstScreen> with SingleTickerProviderStat
        appBar: AppBar(
          title: const Text('Next'),
        ),
-       body: Center(
+       body: Padding(
+         padding: EdgeInsets.all(20),
          child: Column(
            children: [
-             const Padding(padding: EdgeInsets.all(10)),
-             Container(
-               width: 300,
-               height: 300,
-               child: CustomPaint(
-                 painter: MyPaint(animation.value),
-                 child: const Center(),
+             AnimatedAlign(
+               alignment: flg ? Alignment.topLeft : Alignment.topRight,
+               duration: const Duration(seconds: 1),
+               curve: Curves.linear,
+               child: Container(
+                 color: Colors.red,
+                 width: 100,
+                 height: 100,
                ),
-             ),
+             )
            ],
          ),
-       )
+       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          setState(() {
+            flg = !flg;
+          });
+        }),
      );
   }
 }
