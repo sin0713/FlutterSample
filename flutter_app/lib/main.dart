@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:ui' as ui;
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 import 'dart:convert';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
@@ -55,7 +60,7 @@ class _FirstScreenState extends State<FirstScreen> with SingleTickerProviderStat
           padding: EdgeInsets.all(20.0),
           child: Column(
           children:  [
-            const Text('PREFERENCE ACCESS.',
+            const Text('Firestore ACCESS.',
               style: TextStyle(
                 fontSize: 32,
                 fontWeight: ui.FontWeight.w500),),
@@ -72,10 +77,10 @@ class _FirstScreenState extends State<FirstScreen> with SingleTickerProviderStat
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.open_in_new),
         onPressed: () {
-          setData();
+          fire();
           showDialog(context: context, builder: (BuildContext context ) => const AlertDialog(
-            title: Text("Post"),
-            content: Text("get content from URI."),
+            title: Text("GET Documents"),
+            content: Text("connet firestore"),
           ));
         },
       ),
@@ -83,20 +88,17 @@ class _FirstScreenState extends State<FirstScreen> with SingleTickerProviderStat
   }
 
 
-  void setData() async {
-    final ob = {
-      "title":"foo",
-      "author":"SYODA-Tuyano",
-      "content":"this is content. これはサンプルのコンテンツです。"
-    };
-    final jsondata = json.encode(ob);
-    var https = await HttpClient();
-    HttpClientRequest request = await https.postUrl(Uri.parse(url));
-    request.headers.set(HttpHeaders.contentTypeHeader,"application/json; charset=UTF-8");
-    request.write(jsondata);
-    HttpClientResponse response = await request.close();
-    final value = await response.transform(utf8.decoder).join();
-    _controller.text = value;
+  void fire() async {
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
+    final snapshot = await firestore.collection('myData').get();
+    var msg = '';
+    snapshot.docChanges.forEach((element) {
+      final name = element.doc.get('name');
+      final mail = element.doc.get('mail');
+      final age = element.doc.get('age');
+      msg += "${name} (${age}) <${mail}>\n";
+    });
+    _controller.text = msg;
   }
 }
 
