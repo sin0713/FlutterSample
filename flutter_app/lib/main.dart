@@ -32,12 +32,12 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData.light().copyWith(
         primaryColor: Colors.white,
-        primaryTextTheme: TextTheme(
+        primaryTextTheme: const TextTheme(
           headline6: TextStyle(color: kColorTitle),
         ),
         backgroundColor: Colors.white,
       ),
-      home: FirstScreen(),
+      home: const FirstScreen(),
     );
   }
 }
@@ -65,12 +65,11 @@ class _FirstScreenState extends State<FirstScreen> with SingleTickerProviderStat
        ),
        body: SingleChildScrollView(
          child: Column(
-           mainAxisSize: MainAxisSize.max,
-           mainAxisAlignment: MainAxisAlignment.start,
-           children: const [
-             OptimizerButtons(),
-             Padding(padding: EdgeInsets.all(30.0)),
-             BatteryLevelIndicator()
+           children: [
+             const OptimizerButtons(),
+             const BatteryLevelIndicator(),
+             AppsDrainage(),
+             OptimizeNow(),
            ],
          ),
        )
@@ -184,27 +183,131 @@ class BatteryLevelIndicator extends StatelessWidget {
         percentage: percentage,
         textCircleRadius: size * 0.5
       ),
-      child: Material(
-        color: Colors.white,
-        elevation: kElevation,
-        borderRadius: BorderRadius.circular(size * 0.5),
-        child: SizedBox(
-          width: size,
-          height: size,
-          child: Center(
-            child: Text(
-              '${percentage * 100}',
-              style: const TextStyle(color: kColorPink, fontSize: 48),
+      child: Container(
+        padding: const EdgeInsets.all(64),
+        child: Material(
+          color: Colors.white,
+          elevation: kElevation,
+          borderRadius: BorderRadius.circular(size * 0.5),
+          child: SizedBox(
+            width: size,
+            height: size,
+            child: Center(
+              child: Text(
+                '${percentage * 100}',
+                style: const TextStyle(color: kColorPink, fontSize: 48),
+              ),
             ),
           ),
         ),
+      )
+    );
+  }
+}
+
+class _HorizontalBorder extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 1,
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      color: Colors.grey[200],
+    );
+  }
+}
+
+class _AppColumn extends StatelessWidget {
+  final String name;
+  final Icon icon;
+  final String percentage;
+
+  const _AppColumn({
+    Key? key,
+    required this.name,
+    required this.icon,
+    required this.percentage,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      leading: icon,
+      title: Text(
+        name,
+        style: const TextStyle(color: kColorText),
+      ),
+      trailing: Text(
+        percentage,
+        style: const TextStyle(color: kColorText),
       ),
     );
   }
 }
 
+class AppsDrainage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        ListTile(
+          leading: ClipOval(
+            child: Container(
+              color: kColorPurple,
+              child: const Icon(Icons.apps, color: Colors.white,),
+            ),
+          ),
+          title: const Text(
+            'Apps Drainage',
+            style: TextStyle(color: kColorText),
+          ),
+          subtitle: const Text(
+            'show the most draining energy application',
+            style: TextStyle(color: kColorText),
+          ),
+        ),
+        Material(
+          color: Colors.white,
+          elevation: kElevation,
+          borderRadius: BorderRadius.circular(16),
+          child: Column(
+            children:  [
+              const _AppColumn(icon: Icon(Icons.sms, color: Colors.indigo), name: 'SMSApp', percentage: '75%'),
+              _HorizontalBorder(),
+              const _AppColumn(icon: Icon(Icons.sms, color: Colors.indigo), name: 'SMSApp', percentage: '75%'),
+              _HorizontalBorder(),
+              const _AppColumn(icon: Icon(Icons.sms, color: Colors.indigo), name: 'SMSApp', percentage: '75%'),
+              _HorizontalBorder(),
+              const _AppColumn(icon: Icon(Icons.sms, color: Colors.indigo), name: 'SMSApp', percentage: '75%'),
+              _HorizontalBorder(),
+              const _AppColumn(icon: Icon(Icons.sms, color: Colors.indigo), name: 'SMSApp', percentage: '75%'),
+            ],
+          ),
 
+        )
+      ],
+    );
+  }
+}
 
+class OptimizeNow extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 24),
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          primary: kColorPurple,
+          padding: const EdgeInsets.symmetric(horizontal: 48),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24)
+          ),
+        ),
+        onPressed: (){},
+        child: const Text('Optimize Now', style: TextStyle(color: Colors.white),),
+      ),
+    );
+  }
+}
 
 
 
